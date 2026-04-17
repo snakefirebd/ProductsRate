@@ -405,4 +405,280 @@
             <a href="#" class="sidebar-link active"><i class="fas fa-house-chimney-window"></i> হোম</a>
             <a href="#" class="sidebar-link"><i class="fas fa-wallet"></i> আমার ওয়ালেট</a>
             <a href="#" class="sidebar-link"><i class="fas fa-rocket"></i> প্রতিদিনের কাজ</a>
-            <a href="#" class="
+            <a href="#" class="sidebar-link"><i class="fas fa-money-bill-transfer"></i> উত্তোলন</a>
+            <a href="#" class="sidebar-link"><i class="fas fa-fingerprint"></i> সেটিংস</a>
+            <a href="#" id="logoutBtn" class="sidebar-link text-red-500 mt-5"><i class="fas fa-power-off"></i> লগআউট করুন</a>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="container-box animate__animated animate__fadeIn">
+        
+        <!-- SLIDER -->
+        <div class="slider-container">
+            <div class="slider">
+                <img src="https://files.catbox.moe/jaht2l.jpg" alt="Slide 1">
+                <img src="https://files.catbox.moe/jaht2l.jpg" alt="Slide 2">
+                <img src="https://files.catbox.moe/jaht2l.jpg" alt="Slide 3">
+            </div>
+        </div>
+
+        <!-- NAV GRID -->
+        <div class="nav-grid">
+            <a href="#" class="nav-item">
+                <div class="icon-box bg-jobs">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <span>কাজ</span>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="icon-box bg-refer">
+                    <i class="fas fa-users"></i>
+                </div>
+                <span>রেফার</span>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="icon-box bg-wallet">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <span>ওয়ালেট</span>
+            </a>
+            <a href="#" class="nav-item">
+                <div class="icon-box bg-withdraw">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <span>উত্তোলন</span>
+            </a>
+        </div>
+
+        <!-- SHARE / REFERRAL CARD -->
+        <div class="share-card">
+            <div class="refer-desc-box">
+                <h4>🎁 রেফারেল বোনাস পলিসি</h4>
+                <p>প্রতিটি সফল রেফারের জন্য আপনি পাবেন নিশ্চিত ১৫ টাকা বোনাস। আপনার বন্ধু একাউন্ট খুললেই টাকা ওয়ালেটে যোগ হবে!</p>
+            </div>
+            <div class="copy-box">
+                <input type="text" id="refLink" value="লোড হচ্ছে..." readonly>
+                <button class="btn-copy" onclick="copyText()">কপি</button>
+            </div>
+            <div class="social-share-row">
+                <a href="#" onclick="shareSocial('wa')" class="s-wa"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="#" onclick="shareSocial('fb')" class="s-fb"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" onclick="shareSocial('tg')" class="s-tg"><i class="fa-brands fa-telegram"></i></a>
+            </div>
+        </div>
+
+        <!-- NOTICE BOARD -->
+        <div class="notice-board-large">
+            <div class="notice-header">
+                <div class="notice-dot"></div>
+                TaskBazar নোটিশ
+            </div>
+            <div id="typing-text"></div><span class="cursor"></span>
+        </div>
+
+        <!-- LIVE PAYMENT HISTORY -->
+        <div class="live-card">
+            <div class="live-header">
+                <div class="dot"></div> লাইভ পেমেন্ট হিস্টোরি
+            </div>
+            <div class="tx-list">
+                <div class="tx-item">
+                    <div class="tx-avatar"><i class="fa-solid fa-check"></i></div>
+                    <div class="tx-details"><b>ARIF</b><small>bkash</small></div>
+                    <div class="tx-amount"><strong>৳২০০</strong><small>সফল</small></div>
+                </div>
+                <div class="tx-item">
+                    <div class="tx-avatar"><i class="fa-solid fa-check"></i></div>
+                    <div class="tx-details"><b>HASAN</b><small>nagad</small></div>
+                    <div class="tx-amount"><strong>৳৫০০</strong><small>সফল</small></div>
+                </div>
+                <div class="tx-item">
+                    <div class="tx-avatar"><i class="fa-solid fa-check"></i></div>
+                    <div class="tx-details"><b>RAHIM</b><small>rocket</small></div>
+                    <div class="tx-amount"><strong>৳১৫০</strong><small>সফল</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TELEGRAM BUTTONS -->
+        <div class="tg-big-grid">
+            <a href="#" class="btn-tg-big">
+                <i class="fa-brands fa-telegram"></i>
+                <span>চ্যানেল জয়েন</span>
+            </a>
+            <a href="#" class="btn-tg-big">
+                <i class="fa-solid fa-comments"></i>
+                <span>গ্রুপে জয়েন</span>
+            </a>
+        </div>
+
+    </main>
+
+    <!-- POPUP -->
+    <div id="noticePopup" class="fixed inset-0 bg-black/60 flex items-center justify-center z-[10001] hidden px-6">
+        <div class="popup-card animate__animated animate__zoomIn animate__faster">
+            <div class="p-8 text-center bg-blue-50/50">
+                <div class="w-16 h-16 bg-white rounded-3xl shadow-sm flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-telegram text-4xl text-blue-500"></i>
+                </div>
+                <h3 class="font-bold text-gray-800 text-lg">সাপোর্ট সেন্টার</h3>
+                <p class="text-[12px] text-gray-500 mt-2">যেকোনো সমস্যায় সরাসরি আমাদের টেলিগ্রাম গ্রুপে কথা বলুন। আমরা সবসময় আপনার পাশে আছি।</p>
+                <a href="#" class="popup-btn">টেলিগ্রামে জয়েন হোন</a>
+                <button onclick="closePopup()" class="mt-4 text-[11px] font-bold text-gray-400 hover:text-gray-700 uppercase tracking-widest transition">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BOTTOM FOOTER -->
+    <footer class="bottom-footer">
+        <div class="flex w-full justify-around items-center px-2">
+            <a href="#" class="footer-link"><i class="fas fa-headset"></i>হেল্প</a>
+            <a href="#" class="footer-link"><i class="fas fa-wallet"></i>ওয়ালেট</a>
+            <a href="#" class="center-nav"><i class="fas fa-house-chimney text-2xl"></i></a>
+            <a href="#" class="footer-link"><i class="fas fa-users-viewfinder"></i>টিম</a>
+            <a href="#" class="footer-link"><i class="fas fa-circle-user"></i>প্রোফাইল</a>
+        </div>
+    </footer>
+
+    <!-- Firebase & Custom Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+        // আপনার দেওয়া Custom Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgFaTrHW7Grp_Q22p6KNcHZxaEujHsLsE",
+            authDomain: "exchange-project-d4028.firebaseapp.com",
+            databaseURL: "https://exchange-project-d4028-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "exchange-project-d4028",
+            storageBucket: "exchange-project-d4028.firebasestorage.app",
+            messagingSenderId: "313976742479",
+            appId: "1:313976742479:web:45951b360d875c4768c03a",
+            measurementId: "G-PQMFYZS958"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        // শুধুমাত্র Realtime Database ব্যবহার করা হচ্ছে
+        const db = getDatabase(app); 
+
+        const sidebarEmail = document.getElementById('sidebarEmail');
+        const sidebarRefID = document.getElementById('sidebarRefID');
+        const refLinkInput = document.getElementById('refLink');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Check Login State
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is logged in
+                const userCode = user.uid.substring(0, 6).toUpperCase();
+                
+                sidebarEmail.innerText = user.email.split('@')[0]; // Show username from email
+                sidebarRefID.innerText = userCode;
+                refLinkInput.value = `https://taskbazar.com/register?ref=${userCode}`;
+
+                // Hide preloader after everything is loaded
+                setTimeout(() => {
+                    const pl = document.getElementById('new-preloader');
+                    pl.classList.add('hide');
+                    setTimeout(() => pl.style.display = 'none', 500);
+                    
+                    // Show Popup
+                    document.getElementById('noticePopup').classList.remove('hidden');
+                    // Start Typing Notice
+                    typeNotice();
+                }, 1000);
+
+            } else {
+                // User not logged in, wait a bit and alert
+                setTimeout(() => {
+                    alert("দয়া করে প্রথমে লগইন করুন!");
+                    // Here you can redirect to login.html
+                    // window.location.href = 'login.html';
+                    
+                    // For preview, removing preloader anyway
+                    const pl = document.getElementById('new-preloader');
+                    pl.style.display = 'none';
+                    typeNotice();
+                }, 1000);
+            }
+        });
+
+        // Logout Action
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                alert("সফলভাবে লগআউট হয়েছেন।");
+                // window.location.href = 'login.html'; // Redirect to login
+            });
+        });
+
+        /* ── NOTICE TYPING ── */
+        const noticeText = "আসসালামু আলাইকুম! TaskBazar এ আপনাকে স্বাগতম। আপনার বন্ধুদের রেফার করে এবং প্রতিদিনের টাস্ক পূরণ করে দ্রুত ইনকাম শুরু করুন। আমরা দ্রুততম সময়ে পেমেন্ট নিশ্চিত করি। ধন্যবাদ!";
+        let index = 0;
+        window.typeNotice = function() {
+            if (index < noticeText.length) {
+                document.getElementById("typing-text").innerHTML += noticeText.charAt(index);
+                index++;
+                setTimeout(window.typeNotice, 38);
+            }
+        }
+    </script>
+
+    <!-- General UI Scripts -->
+    <script>
+        /* ── CLICK SOUND ── */
+        function playClick() {
+            const sound = document.getElementById("clickSound");
+            sound.currentTime = 0;
+            sound.play().catch(() => {});
+        }
+
+        /* ── SIDEBAR CONTROL ── */
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const isOpen = sidebar.style.transform === 'translateX(0%)';
+            sidebar.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0%)';
+        }
+
+        /* ── POPUP CONTROL ── */
+        function closePopup() { 
+            document.getElementById('noticePopup').classList.add('hidden'); 
+        }
+
+        /* ── COPY LINKS ── */
+        function copyText() {
+            const input = document.getElementById("refLink");
+            input.select();
+            navigator.clipboard.writeText(input.value).catch(()=>{
+                document.execCommand("copy");
+            });
+            const btn = document.querySelector('.btn-copy');
+            btn.textContent = '✓ হয়েছে';
+            btn.style.background = 'linear-gradient(135deg,#0d9e82,#138a72)';
+            setTimeout(() => {
+                btn.textContent = 'কপি';
+                btn.style.background = '';
+            }, 1800);
+        }
+
+        function copySidebarCode() {
+            const code = document.getElementById('sidebarRefID').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('রেফার কোড কপি করা হয়েছে: ' + code);
+            });
+        }
+
+        /* ── SOCIAL SHARE ── */
+        function shareSocial(p) {
+            const link = document.getElementById("refLink").value;
+            const msg = encodeURIComponent("TaskBazar এ প্রতি রেফারে ১৫ টাকা ইনকাম! লিঙ্ক: " + link);
+            if(p==='wa') window.open(`https://api.whatsapp.com/send?text=${msg}`);
+            if(p==='fb') window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`);
+            if(p==='tg') window.open(`https://t.me/share/url?url=${link}&text=${msg}`);
+        }
+    </script>
+</body>
+</html>
