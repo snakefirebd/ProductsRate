@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>দোকানের হিসাব রক্ষক</title>
+    <script src="https://cdn.tailwindcss.com"> </script>
+    
+    <!-- সম্পূর্ণ নতুন লাইব্রেরি (html-to-image) যা অরিজিনাল স্ক্রিনশট নিতে সাহায্য করে -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+    
+    <style>
+        /* ফন্ট ইমপোর্ট */
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        /* লোডিং স্পিনার অ্যানিমেশন */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #ffffff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        .loader-dark {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #2563eb;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ব্যাকগ্রাউন্ড অ্যানিমেশন */
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        /* কাস্টম স্ক্রলবার */
+        #suggestion-box::-webkit-scrollbar { width: 6px; }
+        #suggestion-box::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+
+        /* গ্লাস ইফেক্ট */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ইনপুট ফিল্ড */
+        .magic-input:focus {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+            border-color: #2563eb;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="text-gray-800 pb-28 min-h-screen relative overflow-x-hidden">
+
+    <!-- Animated Background Blobs -->
+    <div class="fixed inset-0 w-full h-full z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-72 h-72 bg-amber-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-[-10%] left-[20%] w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob animation-delay-4000"></div>
+        <div class="absolute bottom-[30%] right-[10%] w-60 h-60 bg-teal-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-blob"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-[#0f172a]/85 text-white p-4 sticky top-0 z-10 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-blue-500 to-teal-400 p-1.5 rounded-xl shadow-inner border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l5 5-5 5"/><path d="M21 17l-5-5 5-5"/><path d="M8 12h8"/></svg>
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-gray-300">দোকান হিসাব</h1>
+            </div>
+            <div id="connection-status" class="flex items-center gap-2 text-sm font-bold bg-white/10 px-3 py-1.5 rounded-full border border-white/10 shadow-sm">
+                <div class="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse shadow-[0_0_8px_rgba(250,204,21,0.8)]"></div>
+                কানেক্টিং
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto p-4 mt-3">
+        
+        <!-- এই কন্টেইনারটি পুরোটাই ক্যাপচার করা হবে (তারিখ + সামারি + হিস্টোরি) -->
+        <div id="summary-capture" class="space-y-7 pb-4 px-1 rounded-2xl transition-all duration-300">
+            
+            <div class="flex justify-center -mt-2 mb-1">
+                <div class="bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full shadow-sm border border-white/80 text-sm font-bold text-gray-600 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span id="current-date">লোড হচ্ছে...</span>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <section class="glass-card rounded-[2rem] p-6 relative overflow-hidden mt-2">
+                <div id="inner-glow" class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500 rounded-full filter blur-[50px] opacity-20"></div>
+                
+                <div class="flex items-center justify-between mb-5 text-gray-800 relative z-10">
+                    <div class="flex items-center gap-2.5">
+                        <div class="bg-blue-100/80 p-2 rounded-xl text-blue-600 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/></svg>
+                        </div>
+                        <h2 class="text-xl font-bold">মাহিরা স্টোর</h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <select id="month-filter" class="appearance-none bg-white/70 border border-blue-200 pl-3 pr-8 py-1.5 rounded-xl text-sm font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-400 backdrop-blur-sm shadow-sm cursor-pointer hover:bg-white transition-colors">
+                                <option value="all">সব হিসাব</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-500">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+
+                        <!-- Image Download Button -->
+                        <button id="download-btn" onclick="downloadSummaryImage()" class="bg-blue-100/80 hover:bg-blue-200 text-blue-600 p-1.5 rounded-xl transition-colors shadow-sm border border-blue-200 backdrop-blur-sm flex justify-center items-center" title="ছবি হিসেবে সেভ করুন">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="balance-card" class="relative z-10 p-6 rounded-2xl text-center shadow-[inset_0_2px_15px_rgba(255,255,255,0.5)] bg-white/40 border border-white/60 transition-all duration-300">
+                    <p id="balance-msg" class="text-base font-bold text-gray-500 mb-1">হিসাব লোড হচ্ছে...</p>
+                    <p id="balance-amount" class="text-4xl font-extrabold text-gray-800 tracking-tight drop-shadow-sm">৳ 0</p>
+                </div>
+
+                <div class="flex justify-between mt-5 text-base px-3 bg-white/40 p-3.5 rounded-2xl border border-white/50 relative z-10">
+                    <div class="text-center w-1/2 border-r border-gray-200/50">
+                        <p class="text-gray-500 font-bold text-sm mb-0.5">১ ➔ ২ এ গেছে</p>
+                        <p id="total-1to2" class="font-extrabold text-blue-600 text-lg">৳ 0</p>
+                    </div>
+                    <div class="text-center w-1/2">
+                        <p class="text-gray-500 font-bold text-sm mb-0.5">২ ➔ ১ এ গেছে</p>
+                        <p id="total-2to1" class="font-extrabold text-emerald-600 text-lg">৳ 0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transaction History Section -->
+            <section class="glass-card rounded-[2rem] p-6">
+                <div class="flex items-center justify-between mb-5 text-gray-800">
+                    <div class="flex items-center gap-2.5">
+                        <div class="bg-blue-100/80 p-2 rounded-xl text-blue-600 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <h2 class="text-xl font-bold">সাম্প্রতিক লেনদেন</h2>
+                    </div>
+                    <span id="tx-count" class="text-sm font-bold bg-white/60 text-gray-700 px-3.5 py-1.5 rounded-full shadow-sm border border-white">0 টি</span>
+                </div>
+
+                <div id="history-list" class="space-y-4">
+                    <div class="flex justify-center py-8">
+                        <div class="loader loader-dark"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Floating Action Button (FAB) -->
+    <button onclick="openModal()" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-tr from-blue-600 via-teal-500 to-emerald-500 text-white rounded-full shadow-[0_10px_25px_rgba(20,184,166,0.4)] flex justify-center items-center transition-all duration-300 hover:scale-110 hover:rotate-90 active:scale-95 z-40 border-2 border-white/20">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+
+    <!-- Overlay Background -->
+    <div id="modal-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md hidden z-50 transition-opacity duration-300 opacity-0" onclick="closeModal()"></div>
+
+    <!-- Bottom Sheet / Multi-step Modal -->
+    <div id="bottom-sheet" class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl rounded-t-[2.5rem] shadow-[0_-15px_40px_rgba(0,0,0,0.2)] z-50 max-w-md mx-auto transform translate-y-full transition-transform duration-400 ease-out pb-8 border-t border-white/50">
+        
+        <div class="p-5 flex justify-between items-center border-b border-gray-100 relative">
+            <div class="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-1.5 bg-gray-300/80 rounded-full"></div>
+            
+            <div class="w-10 mt-3">
+                <button id="btn-back" onclick="prevStep()" class="hidden text-gray-500 hover:text-blue-600 transition-colors bg-gray-100 p-2 rounded-full hover:bg-blue-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                </button>
+            </div>
+            <h3 class="font-extrabold text-2xl text-gray-800 mt-3" id="step-title">নতুন এন্ট্রি</h3>
+            <div class="w-10 mt-3 flex justify-end">
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors bg-gray-100 p-2 rounded-full hover:bg-red-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="flex justify-center gap-3 mb-8">
+                <div id="dot-1" class="w-3 h-3 rounded-full bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.6)] transition-all duration-300 transform scale-125"></div>
+                <div id="dot-2" class="w-3 h-3 rounded-full bg-gray-200 transition-all duration-300"></div>
+                <div id="dot-3" class="w-3 h-3 rounded-full bg-gray-200 transition-all duration-300"></div>
+            </div>
+
+            <!-- Step 1 -->
+            <div id="step-1" class="block space-y-6 animate-fade-in">
+                <div class="flex bg-gray-100 p-1.5 rounded-2xl shadow-inner">
+                    <button type="button" id="btn-1to2" onclick="setDirection('1to2')" class="flex-1 py-3 text-base font-bold rounded-xl transition-all duration-300 flex justify-center items-center gap-2 bg-white text-blue-600 shadow-md transform scale-100 border border-gray-50">
+                        দোকান ১ 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> 
+                        ২
+                    </button>
+                    <button type="button" id="btn-2to1" onclick="setDirection('2to1')" class="flex-1 py-3 text-base font-bold rounded-xl transition-all duration-300 flex justify-center items-center gap-2 text-gray-500 hover:text-gray-800 bg-transparent shadow-none scale-95">
+                        দোকান ২ 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> 
+                        ১
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <label class="block text-lg font-bold text-gray-700 mb-3 text-center">কোন পণ্য দেওয়া হচ্ছে?</label>
+                    <div class="relative">
+                        <input type="text" id="product-input" autocomplete="off" placeholder="যেমন: চাল, ডাল" class="magic-input w-full px-5 py-4 text-xl font-bold border-2 border-gray-200 rounded-2xl outline-none transition-all text-center relative z-20 bg-gray-50/50" />
+                        <div id="suggestion-box" class="hidden absolute bottom-full mb-2 left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-[0_-15px_30px_-5px_rgba(0,0,0,0.15)] z-50 max-h-52 overflow-y-auto"></div>
+                    </div>
+                </div>
+                
+                <button onclick="nextStep(1)" class="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-extrabold text-lg py-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/40 mt-6 active:scale-[0.98]">
+                    পরবর্তী ধাপ ➔
+                </button>
+            </div>
+
+            <!-- Step 2 -->
+            <div id="step-2" class="hidden space-y-6">
+                <div>
+                    <label class="block text-lg font-bold text-gray-700 mb-3 text-center text-gradient">পরিমাণ নির্বাচন করুন</label>
+                    <div class="flex gap-3 h-16">
+                        <input type="number" id="qty-input" placeholder="0" class="magic-input w-3/5 px-4 text-2xl font-extrabold border-2 border-gray-200 rounded-2xl outline-none transition-all text-center bg-gray-50/50 text-blue-700" />
+                        <div class="relative w-2/5 h-full">
+                            <select id="unit-input" class="magic-input w-full h-full pl-3 pr-8 text-lg font-bold border-2 border-gray-200 rounded-2xl outline-none transition-all bg-white text-gray-700 cursor-pointer appearance-none text-center">
+                                <option value="বস্তা">বস্তা</option>
+                                <option value="কার্টুন">কার্টুন</option>
+                                <option value="পিস">পিস</option>
+                                <option value="কেজি">কেজি</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="nextStep(2)" class="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white font-extrabold text-lg py-4 rounded-2xl transition-all shadow-lg hover:shadow-blue-500/40 mt-6 active:scale-[0.98]">
+                    পরবর্তী ধাপ ➔
+                </button>
+            </div>
+
+            <!-- Step 3 -->
+            <div id="step-3" class="hidden space-y-6">
+                <div>
+                    <label class="block text-lg font-bold text-gray-700 mb-3 text-center text-gradient">সর্বমোট দাম কত?</label>
+                    <div class="relative flex items-center justify-center">
+                        <span class="absolute left-5 text-gray-400 font-extrabold text-3xl">৳</span>
+                        <input type="number" id="amount-input" placeholder="0" class="magic-input w-full pl-14 pr-5 py-4 text-4xl font-extrabold text-emerald-600 border-2 border-gray-200 rounded-2xl outline-none transition-all text-center bg-gray-50/50" />
+                    </div>
+                </div>
+                <button onclick="submitEntry()" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-xl py-4 rounded-2xl transition-all shadow-lg hover:shadow-emerald-500/40 mt-6 flex justify-center items-center gap-2 active:scale-[0.98]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-
