@@ -24,6 +24,22 @@
         .neon-glow-success {
             box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
         }
+        .custom-dropdown {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(99, 102, 241, 0.15);
+        }
+        .custom-dropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-dropdown::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-dropdown::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body class="text-slate-100 min-h-screen pb-12">
@@ -50,27 +66,88 @@
     <main class="max-w-5xl mx-auto px-4">
         
         <div id="practice-section" class="space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="glass-card p-5 rounded-2xl border border-indigo-500/20 neon-glow">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-semibold text-indigo-400 uppercase tracking-wider">আজকের পরিসংখ্যান</h4>
+                        <i class="fa-solid fa-calendar-day text-indigo-400 text-lg"></i>
+                    </div>
+                    <div class="flex gap-4 mt-1">
+                        <div>
+                            <p class="text-xs text-slate-400">সঠিক: <span id="today-correct" class="text-emerald-400 font-bold text-lg">০</span></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">ভুল: <span id="today-wrong" class="text-rose-400 font-bold text-lg">০</span></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">গড়: <span id="today-avg" class="text-cyan-400 font-bold text-lg">০%</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border border-amber-500/10">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-semibold text-amber-400 uppercase tracking-wider">গতকালকের পরিসংখ্যান</h4>
+                        <i class="fa-solid fa-calendar-minus text-amber-400 text-lg"></i>
+                    </div>
+                    <div class="flex gap-4 mt-1">
+                        <div>
+                            <p class="text-xs text-slate-400">সঠিক: <span id="yesterday-correct" class="text-emerald-400 font-bold text-lg">০</span></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">ভুল: <span id="yesterday-wrong" class="text-rose-400 font-bold text-lg">০</span></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">গড়: <span id="yesterday-avg" class="text-amber-400 font-bold text-lg">০%</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border border-slate-700">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">সর্বমোট পূর্বের অগ্রগতি</h4>
+                        <i class="fa-solid fa-clock-rotate-left text-slate-400 text-lg"></i>
+                    </div>
+                    <div class="flex gap-4 mt-1">
+                        <div>
+                            <p class="text-xs text-slate-400">সঠিক: <span id="history-correct" class="text-emerald-400 font-bold text-lg">০</span></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">ভুল: <span id="history-wrong" class="text-rose-400 font-bold text-lg">০</span></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">গড়: <span id="history-avg" class="text-slate-300 font-bold text-lg">০%</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="glass-card rounded-2xl p-6 neon-glow">
                 <h2 class="text-lg font-bold mb-4 text-indigo-400 flex items-center gap-2">
                     <i class="fa-solid fa-plus-circle"></i> নতুন শব্দ যুক্ত করুন
                 </h2>
                 <form id="word-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
+                    <div class="relative">
                         <label class="block text-xs font-semibold text-slate-400 mb-1">আরবি শব্দ (Arabic)</label>
-                        <input type="text" id="arabic-input" dir="rtl" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-xl text-right font-bold text-cyan-400 focus:outline-none focus:border-indigo-500" placeholder="العربية" required>
+                        <input type="text" id="arabic-input" dir="rtl" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-xl text-right font-bold text-cyan-400 focus:outline-none focus:border-indigo-500 transition-all" placeholder="العربية" autocomplete="off">
+                        <div id="arabic-dropdown" class="custom-dropdown absolute left-0 right-0 mt-2 rounded-xl max-h-48 overflow-y-auto hidden z-50 py-1"></div>
                     </div>
-                    <div>
+                    
+                    <div class="relative">
                         <label class="block text-xs font-semibold text-slate-400 mb-1">উচ্চারণ (Pronunciation)</label>
-                        <input type="text" id="pronounce-input" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="যেমন: আনা" required>
+                        <input type="text" id="pronounce-input" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" placeholder="যেমন: আনা" autocomplete="off">
+                        <div id="pronounce-dropdown" class="custom-dropdown absolute left-0 right-0 mt-2 rounded-xl max-h-48 overflow-y-auto hidden z-50 py-1"></div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-1">বাংলা অর্থ (Meaning)</label>
+                    
+                    <div class="relative">
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">বাংলা অর্থ (Meaning) <span class="text-rose-400">*</span></label>
                         <div class="flex gap-2">
-                            <input type="text" id="meaning-input" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="যেমন: আমি" required>
-                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 rounded-xl font-bold transition-all whitespace-nowrap">
+                            <input type="text" id="meaning-input" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" placeholder="যেমন: আমি" required autocomplete="off">
+                            <button type="submit" id="save-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 rounded-xl font-bold transition-all whitespace-nowrap">
                                 <i class="fa-solid fa-save mr-1"></i> সেভ
                             </button>
                         </div>
+                        <div id="meaning-dropdown" class="custom-dropdown absolute left-0 right-0 mt-2 rounded-xl max-h-48 overflow-y-auto hidden z-50 py-1" style="width: calc(100% - 84px);"></div>
                     </div>
                 </form>
             </div>
@@ -100,18 +177,34 @@
                         <p id="quiz-question-pronounce" class="text-slate-400 italic text-lg">...</p>
                     </div>
 
-                    <div id="quiz-options" class="grid grid-cols-1 gap-3 mt-6">
-                        </div>
+                    <div id="quiz-options" class="grid grid-cols-1 gap-3 mt-6"></div>
 
                     <div id="quiz-feedback" class="mt-6 text-lg font-bold hidden"></div>
                 </div>
 
-                <div id="quiz-result" class="hidden py-8">
-                    <div class="text-6xl text-amber-400 mb-4"><i class="fa-solid fa-trophy"></i></div>
-                    <h3 class="text-2xl font-bold mb-2">পরীক্ষা শেষ!</h3>
+                <div id="quiz-result" class="hidden py-6">
+                    <div class="text-5xl text-amber-400 mb-3"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3 class="text-2xl font-bold mb-2">পরীক্ষার ফলাফল ও পরিসংখ্যান</h3>
+                    
                     <p id="result-text" class="text-slate-300 mb-6">আপনার স্কোর এখানে দেখাবে</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
+                        <div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl text-center">
+                            <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-1">পেরেছেন (সঠিক)</p>
+                            <p id="stats-correct" class="text-3xl font-extrabold text-emerald-400">০</p>
+                        </div>
+                        <div class="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl text-center">
+                            <p class="text-xs font-semibold text-rose-400 uppercase tracking-wider mb-1">পারেননি (ভুল)</p>
+                            <p id="stats-wrong" class="text-3xl font-extrabold text-rose-400">০</p>
+                        </div>
+                    </div>
+
+                    <div id="progress-container" class="mb-6 p-4 rounded-xl bg-slate-900/40 border border-slate-700/60 max-w-sm mx-auto hidden">
+                        <p id="progress-text" class="text-sm text-slate-300 font-medium"></p>
+                    </div>
+
                     <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-bold transition-all">
-                        <i class="fa-solid fa-rotate-left mr-1"></i> আবার চেষ্টা করুন
+                        <i class="fa-solid fa-rotate-left mr-1"></i> আবার পরীক্ষা দিন
                     </button>
                 </div>
 
@@ -120,35 +213,68 @@
 
     </main>
 
+    <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 animate-fade-in">
+        <div class="glass-card w-full max-w-md rounded-2xl p-6 neon-glow border border-indigo-500/30">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-indigo-400"><i class="fa-solid fa-pen-to-square mr-1"></i> তথ্য পরিবর্তন করুন</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-200 text-xl transition-all"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">আরби শব্দ (Arabic)</label>
+                    <input type="text" id="edit-arabic" dir="rtl" class="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-xl text-right font-bold text-cyan-400 focus:outline-none focus:border-indigo-500 transition-all" autocomplete="off">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">উচ্চারণ (Pronunciation)</label>
+                    <input type="text" id="edit-pronounce" class="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" autocomplete="off">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1">বাংলা অর্থ (Meaning) <span class="text-rose-400">*</span></label>
+                    <input type="text" id="edit-meaning" class="w-full bg-slate-950/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-indigo-500 transition-all" required autocomplete="off">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="deleteWordFromModal()" class="w-1/3 bg-rose-500/20 hover:bg-rose-500 border border-rose-500/40 hover:border-rose-500 text-rose-300 hover:text-white py-3 rounded-xl font-bold transition-all">
+                        <i class="fa-solid fa-trash-can mr-1"></i> মুছুন
+                    </button>
+                    <button type="submit" id="update-btn" class="w-2/3 bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold transition-all neon-glow">
+                        <i class="fa-solid fa-check mr-1"></i> আপডেট করুন
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
     <script>
         // --- ফায়ারবেস কনফিগারেশন ---
-const firebaseConfig = {
-  apiKey: "AIzaSyDgFaTrHW7Grp_Q22p6KNcHZxaEujHsLsE",
-  authDomain: "exchange-project-d4028.firebaseapp.com",
-  databaseURL: "https://exchange-project-d4028-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "exchange-project-d4028",
-  storageBucket: "exchange-project-d4028.firebasestorage.app",
-  messagingSenderId: "313976742479",
-  appId: "1:313976742479:web:45951b360d875c4768c03a",
-  measurementId: "G-PQMFYZS958"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgFaTrHW7Grp_Q22p6KNcHZxaEujHsLsE",
+            authDomain: "exchange-project-d4028.firebaseapp.com",
+            databaseURL: "https://exchange-project-d4028-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "exchange-project-d4028",
+            storageBucket: "exchange-project-d4028.firebasestorage.app",
+            messagingSenderId: "313976742479",
+            appId: "1:313976742479:web:45951b360d875c4768c03a",
+            measurementId: "G-PQMFYZS958"
+        };
 
-
-        // ফায়ারবেস ইনিশিয়ালাইজ করা
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const dbRef = database.ref('arabic_words');
+        const historyRef = database.ref('quiz_history');
 
-        // গ্লোবাল ভেরিয়েবল
         let allWords = [];
         let currentQuizIndex = 0;
         let score = 0;
         let quizWords = [];
 
-        // --- ট্যাব পরিবর্তনের লজিক ---
+        let uniqueArabic = new Set();
+        let uniquePronounce = new Set();
+        let uniqueMeaning = new Set();
+
         function switchTab(tab) {
             if (tab === 'practice') {
                 document.getElementById('practice-section').classList.remove('hidden');
@@ -164,26 +290,58 @@ const firebaseConfig = {
             }
         }
 
-        // --- নতুন শব্দ সেভ করার লজিক ---
+        // অ্যাপ লোড হওয়ার সাথে সাথেই পরিসংখ্যান রেন্ডার করার লিসেনার যুক্ত করা
+        loadStatistics();
+
         document.getElementById('word-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const saveBtn = document.getElementById('save-btn');
             const arabic = document.getElementById('arabic-input').value.trim();
             const pronounce = document.getElementById('pronounce-input').value.trim();
             const meaning = document.getElementById('meaning-input').value.trim();
 
-            if (arabic && pronounce && meaning) {
-                const newWordRef = dbRef.push();
-                newWordRef.set({
-                    id: newWordRef.key,
-                    arabic: arabic,
-                    pronounce: pronounce,
-                    meaning: meaning,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                }).then(() => {
-                    document.getElementById('word-form').reset();
-                }).catch(err => alert("সেভ করতে সমস্যা হয়েছে: " + err.message));
+            if (!meaning) {
+                alert("দয়া করে শব্দের বাংলা অর্থ লিখুন।");
+                return;
             }
+            if (!arabic && !pronounce) {
+                alert("দয়া করে আরবি শব্দ অথবা উচ্চারণ, যেকোনো একটি অবশ্যই লিখুন।");
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerText = "চেক করা হচ্ছে...";
+
+            const isDuplicate = allWords.some(word => {
+                const arabicMatch = arabic && word.arabic && (word.arabic.toLowerCase() === arabic.toLowerCase()) && (word.meaning.toLowerCase() === meaning.toLowerCase());
+                const pronounceMatch = pronounce && word.pronounce && (word.pronounce.toLowerCase() === pronounce.toLowerCase()) && (word.meaning.toLowerCase() === meaning.toLowerCase());
+                return arabicMatch || pronounceMatch;
+            });
+
+            if (isDuplicate) {
+                alert(`"${meaning}" অর্থের এই শব্দটি আপনার শব্দভাণ্ডারে ইতিমধ্যে যুক্ত রয়েছে! ডুপ্লিকেট ডাটা সেভ করা যাবে না।`);
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = `<i class="fa-solid fa-save mr-1"></i> সেভ`;
+                return;
+            }
+
+            const newWordRef = dbRef.push();
+            newWordRef.set({
+                id: newWordRef.key,
+                arabic: arabic || "", 
+                pronounce: pronounce || "",
+                meaning: meaning,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                document.getElementById('word-form').reset();
+                hideAllDropdowns();
+            }).catch(err => {
+                alert("সেভ করতে সমস্যা হয়েছে: " + err.message);
+            }).finally(() => {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = `<i class="fa-solid fa-save mr-1"></i> সেভ`;
+            });
         });
 
         // --- রিয়েলটাইম ডেটা রিড ও রেন্ডার লজিক ---
@@ -196,6 +354,9 @@ const firebaseConfig = {
             if (!data) {
                 container.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">কোনো শব্দ পাওয়া যায়নি। নতুন শব্দ যোগ করুন!</div>`;
                 countSpan.innerText = "০ টি শব্দ";
+                uniqueArabic.clear();
+                uniquePronounce.clear();
+                uniqueMeaning.clear();
                 return;
             }
 
@@ -204,37 +365,188 @@ const firebaseConfig = {
                 allWords.push(data[key]);
             }
 
-            // নতুন যুক্ত করা শব্দগুলো সবার আগে দেখানোর জন্য সর্ট করা
             allWords.sort((a, b) => b.timestamp - a.timestamp);
             countSpan.innerText = `${allWords.length} টি শব্দ`;
 
+            uniqueArabic.clear();
+            uniquePronounce.clear();
+            uniqueMeaning.clear();
+
             allWords.forEach(word => {
                 const card = document.createElement('div');
-                card.className = "glass-card p-5 rounded-xl flex flex-col justify-between hover:border-slate-500 transition-all relative group";
+                card.className = "glass-card p-5 rounded-xl flex flex-col justify-between hover:border-indigo-500/50 transition-all relative group cursor-pointer";
+                card.setAttribute('onclick', `openEditModal('${word.id}', \`${word.arabic}\`, \`${word.pronounce}\`, \`${word.meaning}\`)`);
+                
+                const arabicDisplay = word.arabic ? word.arabic : `<span class="text-sm font-normal italic text-slate-500">আরবি নেই</span>`;
+                const pronounceDisplay = word.pronounce ? word.pronounce : `<span class="text-sm font-normal italic text-slate-500">উচ্চারণ নেই</span>`;
+
                 card.innerHTML = `
-                    <button onclick="deleteWord('${word.id}')" class="absolute top-3 right-3 text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                    <div class="text-right mb-2">
-                        <h3 dir="rtl" class="text-3xl font-bold text-cyan-400 tracking-wide">${word.arabic}</h3>
+                    <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <button onclick="event.stopPropagation(); openEditModal('${word.id}', \`${word.arabic}\`, \`${word.pronounce}\`, \`${word.meaning}\`)" class="text-slate-400 hover:text-indigo-400 transition-all p-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteWord('${word.id}')" class="text-slate-400 hover:text-rose-400 transition-all p-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <div class="text-right mb-2 pr-12">
+                        <h3 dir="rtl" class="text-3xl font-bold text-cyan-400 tracking-wide">${word.arabic ? word.arabic : ''}</h3>
+                        ${!word.arabic ? arabicDisplay : ''}
                     </div>
                     <div class="border-t border-slate-700/50 pt-2 mt-2">
                         <p class="text-xs font-semibold text-indigo-400 uppercase tracking-wider">উচ্চারণ</p>
-                        <p class="text-slate-200 font-medium mb-1">${word.pronounce}</p>
+                        <p class="text-slate-200 font-medium mb-1">${pronounceDisplay}</p>
                         <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">অর্থ</p>
                         <p class="text-slate-300 font-semibold">${word.meaning}</p>
                     </div>
                 `;
                 container.appendChild(card);
+
+                if (word.arabic) uniqueArabic.add(word.arabic);
+                if (word.pronounce) uniquePronounce.add(word.pronounce);
+                if (word.meaning) uniqueMeaning.add(word.meaning);
             });
         });
 
-        // --- শব্দ ডিলিট করার লজিক ---
+        // --- মডাল ওপেন এবং ক্লোজ করার ফাংশন ---
+        function openEditModal(id, arabic, pronounce, meaning) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-arabic').value = arabic === "undefined" || arabic === "" ? "" : arabic;
+            document.getElementById('edit-pronounce').value = pronounce === "undefined" || pronounce === "" ? "" : pronounce;
+            document.getElementById('edit-meaning').value = meaning;
+            
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-form').reset();
+        }
+
+        // --- মডাল ফর্ম সাবমিট (তথ্য আপডেট লজিক) ---
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-id').value;
+            const arabic = document.getElementById('edit-arabic').value.trim();
+            const pronounce = document.getElementById('edit-pronounce').value.trim();
+            const meaning = document.getElementById('edit-meaning').value.trim();
+            const updateBtn = document.getElementById('update-btn');
+
+            if (!meaning) {
+                alert("দয়া করে শব্দের বাংলা অর্থ লিখুন।");
+                return;
+            }
+            if (!arabic && !pronounce) {
+                alert("দয়া করে আরবি শব্দ অথবা উচ্চারণ, যেকোনো একটি অবশ্যই লিখুন।");
+                return;
+            }
+
+            updateBtn.disabled = true;
+            updateBtn.innerText = "আপডেট হচ্ছে...";
+
+            const isDuplicate = allWords.some(word => {
+                if (word.id === id) return false; 
+                const arabicMatch = arabic && word.arabic && (word.arabic.toLowerCase() === arabic.toLowerCase()) && (word.meaning.toLowerCase() === meaning.toLowerCase());
+                const pronounceMatch = pronounce && word.pronounce && (word.pronounce.toLowerCase() === pronounce.toLowerCase()) && (word.meaning.toLowerCase() === meaning.toLowerCase());
+                return arabicMatch || pronounceMatch;
+            });
+
+            if (isDuplicate) {
+                alert(`"${meaning}" অর্থের এই শব্দটি আপনার শব্দভাণ্ডারে অন্য আইটেমে ইতিমধ্যে যুক্ত রয়েছে!`);
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> আপডেট করুন`;
+                return;
+            }
+
+            dbRef.child(id).update({
+                arabic: arabic || "",
+                pronounce: pronounce || "",
+                meaning: meaning
+            }).then(() => {
+                closeEditModal();
+            }).catch(err => alert("আপডেট করতে সমস্যা হয়েছে: " + err.message))
+              .finally(() => {
+                  updateBtn.disabled = false;
+                  updateBtn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> আপডেট করুন`;
+              });
+        });
+
+        function deleteWordFromModal() {
+            const id = document.getElementById('edit-id').value;
+            if (id) {
+                if (confirm("আপনি কি নিশ্চিতভাবে এই শব্দটি মুছে ফেলতে চান?")) {
+                    dbRef.child(id).remove().then(() => {
+                        closeEditModal();
+                    });
+                }
+            }
+        }
+
         function deleteWord(id) {
             if (confirm("আপনি কি নিশ্চিতভাবে এই শব্দটি মুছে ফেলতে চান?")) {
                 dbRef.child(id).remove();
             }
         }
+
+        // --- প্রিমিয়াম কাস্টম ড্রপডাউন সাজেশন লজিক ---
+        function setupPremiumSuggestions(inputId, dropdownId, uniqueSet, isRtl = false) {
+            const inputEl = document.getElementById(inputId);
+            const dropdownEl = document.getElementById(dropdownId);
+
+            inputEl.addEventListener('input', function() {
+                const value = this.value.trim().toLowerCase();
+                
+                if (value.length === 0) {
+                    dropdownEl.innerHTML = '';
+                    dropdownEl.classList.add('hidden');
+                    return;
+                }
+
+                const filtered = Array.from(uniqueSet).filter(item => 
+                    item.toLowerCase().includes(value)
+                );
+
+                if (filtered.length === 0) {
+                    dropdownEl.innerHTML = '';
+                    dropdownEl.classList.add('hidden');
+                    return;
+                }
+
+                dropdownEl.innerHTML = '';
+                dropdownEl.classList.remove('hidden');
+
+                filtered.forEach(item => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = `px-4 py-2.5 text-sm cursor-pointer hover:bg-indigo-600/30 hover:text-cyan-400 transition-all font-medium border-b border-slate-800/50 last:border-0 ${isRtl ? 'text-right font-bold text-base' : 'text-left'}`;
+                    optionDiv.innerText = item;
+                    
+                    optionDiv.addEventListener('click', function() {
+                        inputEl.value = item;
+                        dropdownEl.innerHTML = '';
+                        dropdownEl.classList.add('hidden');
+                    });
+
+                    dropdownEl.appendChild(optionDiv);
+                });
+            });
+        }
+
+        function hideAllDropdowns() {
+            document.getElementById('arabic-dropdown').classList.add('hidden');
+            document.getElementById('pronounce-dropdown').classList.add('hidden');
+            document.getElementById('meaning-dropdown').classList.add('hidden');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.relative')) {
+                hideAllDropdowns();
+            }
+        });
+
+        setupPremiumSuggestions('arabic-input', 'arabic-dropdown', uniqueArabic, true);
+        setupPremiumSuggestions('pronounce-input', 'pronounce-dropdown', uniquePronounce, false);
+        setupPremiumSuggestions('meaning-input', 'meaning-dropdown', uniqueMeaning, false);
 
         // --- কুইজ/পরীক্ষা সিস্টেম লজিক ---
         function startQuiz() {
@@ -242,11 +554,13 @@ const firebaseConfig = {
                 document.getElementById('quiz-box').classList.add('hidden');
                 document.getElementById('quiz-result').classList.remove('hidden');
                 document.getElementById('result-text').innerText = "পরীক্ষা শুরু করার জন্য কমপক্ষে ৪টি শব্দ ডাটাবেজে যুক্ত থাকতে হবে।";
+                document.getElementById('stats-correct').innerText = "০";
+                document.getElementById('stats-wrong').innerText = "০";
+                document.getElementById('progress-container').classList.add('hidden');
                 return;
             }
 
-            // শব্দগুলোকে র‍্যান্ডমাইজ বা ওলটপালট করা
-            quizWords = [...allWords].sort(() => 0.5 - Math.random()).slice(0, 10); // সর্বোচ্চ ১০টি শব্দের পরীক্ষা হবে
+            quizWords = [...allWords].sort(() => 0.5 - Math.random()).slice(0, 10); 
             currentQuizIndex = 0;
             score = 0;
 
@@ -261,10 +575,15 @@ const firebaseConfig = {
             const currentWord = quizWords[currentQuizIndex];
             
             document.getElementById('quiz-progress').innerText = `প্রশ্ন: ${currentQuizIndex + 1}/${quizWords.length}`;
-            document.getElementById('quiz-question-arabic').innerText = currentWord.arabic;
-            document.getElementById('quiz-question-pronounce').innerText = `(${currentWord.pronounce})`;
+            
+            if (currentWord.arabic) {
+                document.getElementById('quiz-question-arabic').innerText = currentWord.arabic;
+                document.getElementById('quiz-question-pronounce').innerText = currentWord.pronounce ? `(${currentWord.pronounce})` : '';
+            } else {
+                document.getElementById('quiz-question-arabic').innerText = currentWord.pronounce;
+                document.getElementById('quiz-question-pronounce').innerText = '(শুধু উচ্চারণ যুক্ত শব্দ)';
+            }
 
-            // অপশন তৈরি করা (১টি সঠিক উত্তর এবং ৩টি ভুল উত্তর র‍্যান্ডমলি নেওয়া)
             let options = [currentWord.meaning];
             let wrongOptions = allWords.filter(w => w.meaning !== currentWord.meaning);
             wrongOptions.sort(() => 0.5 - Math.random());
@@ -272,7 +591,6 @@ const firebaseConfig = {
             for (let i = 0; i < Math.min(3, wrongOptions.length); i++) {
                 options.push(wrongOptions[i].meaning);
             }
-            // অপশনগুলোকে আবার ওলটপালট করা
             options.sort(() => 0.5 - Math.random());
 
             const optionsContainer = document.getElementById('quiz-options');
@@ -290,7 +608,6 @@ const firebaseConfig = {
         function checkAnswer(selectedBtn, selectedOption, correctOption) {
             const buttons = document.getElementById('quiz-options').getElementsByTagName('button');
             
-            // সব বোতামের ক্লিক ডিজেবল করা
             for (let btn of buttons) {
                 btn.disabled = true;
                 const optText = btn.querySelector('span').innerText;
@@ -314,7 +631,6 @@ const firebaseConfig = {
                 feedback.innerHTML = `<span class="text-rose-400"><i class="fa-solid fa-face-frown"></i> ভুল উত্তর! সঠিক অর্থ: <b>${correctOption}</b></span>`;
             }
 
-            // ১.৫ সেকেন্ড পর পরবর্তী প্রশ্নে যাওয়া
             setTimeout(() => {
                 currentQuizIndex++;
                 if (currentQuizIndex < quizWords.length) {
@@ -329,8 +645,112 @@ const firebaseConfig = {
             document.getElementById('quiz-box').classList.add('hidden');
             document.getElementById('quiz-result').classList.remove('hidden');
             
-            const percentage = Math.round((score / quizWords.length) * 100);
-            document.getElementById('result-text').innerHTML = `আপনি <b>${quizWords.length}</b> টি শব্দের মধ্যে <b>${score}</b> টির সঠিক উত্তর দিয়েছেন।<br><span class="text-indigo-400 font-bold text-xl">স্কোর: ${percentage}%</span>`;
+            const totalQuestions = quizWords.length;
+            const wrongAnswers = totalQuestions - score;
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            document.getElementById('stats-correct').innerText = `${score}`;
+            document.getElementById('stats-wrong').innerText = `${wrongAnswers}`;
+            
+            historyRef.orderByChild('timestamp').limitToLast(1).once('value', (snapshot) => {
+                let progressText = "";
+                const container = document.getElementById('progress-container');
+                container.classList.remove('hidden');
+
+                if (snapshot.exists()) {
+                    let lastQuiz;
+                    snapshot.forEach(childSnapshot => {
+                        lastQuiz = childSnapshot.val();
+                    });
+                    
+                    const lastPercentage = lastQuiz.percentage;
+                    const diff = percentage - lastPercentage;
+                    
+                    if (diff > 0) {
+                        progressText = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-arrow-trend-up"></i> অগ্রগতি: +${diff}%</span> (গত পরীক্ষায় আপনার স্কোর ছিল ${lastPercentage}%)`;
+                    } else if (diff < 0) {
+                        progressText = `<span class="text-rose-400 font-bold"><i class="fa-solid fa-arrow-trend-down"></i> পিছু হটেছেন: ${diff}%</span> (গত পরীক্ষায় আপনার স্কোর ছিল ${lastPercentage}%)`;
+                    } else {
+                        progressText = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-equals"></i> অপরিবর্তিত: ০%</span> (গত পরীক্ষার মতোই সমান স্কোর হয়েছে, ${lastPercentage}%)`;
+                    }
+                } else {
+                    progressText = `<span class="text-indigo-400 font-bold"><i class="fa-solid fa-star"></i> এটি আপনার প্রথম পরীক্ষা!</span> পরবর্তী পরীক্ষা থেকে আপনার অগ্রগতি ট্র্যাক করা শুরু হবে।`;
+                }
+                
+                document.getElementById('progress-text').innerHTML = progressText;
+
+                // বর্তমান পরীক্ষার তথ্য ডাটাবেজে সেভ করা
+                const newHistoryItem = historyRef.push();
+                newHistoryItem.set({
+                    id: newHistoryItem.key,
+                    score: score,
+                    total: totalQuestions,
+                    percentage: percentage,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            });
+
+            document.getElementById('result-text').innerHTML = `আপনি <b>${totalQuestions}</b> টি শব্দের মধ্যে <b>${score}</b> টির সঠিক উত্তর দিয়েছেন।<br><span class="text-indigo-400 font-bold text-xl">বর্তমান স্কোর: ${percentage}%</span>`;
+        }
+
+        // --- বিস্তারিত পরিসংখ্যান (আজ, গতকাল ও পূর্বের ইতিহাস) ক্যালকুলেশন লজিক ---
+        function loadStatistics() {
+            historyRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                let todayCorrect = 0, todayWrong = 0, todayTotalPct = 0, todayCount = 0;
+                let yesterCorrect = 0, yesterWrong = 0, yesterTotalPct = 0, yesterCount = 0;
+                let historyCorrect = 0, historyWrong = 0, historyTotalPct = 0, historyCount = 0;
+
+                if (!data) return;
+
+                // আজকের এবং গতকালের ডেট রেঞ্জ অবজেক্ট নির্ধারণ (লোকাল টাইম ডেট হিসেবে)
+                const now = new Date();
+                
+                const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+                const startOfYesterday = startOfToday - (24 * 60 * 60 * 1000);
+
+                for (let key in data) {
+                    const quiz = data[key];
+                    const qTimestamp = quiz.timestamp;
+                    const correct = quiz.score;
+                    const wrong = quiz.total - quiz.score;
+                    const pct = quiz.percentage;
+
+                    if (qTimestamp >= startOfToday) {
+                        // আজকের হিসেব
+                        todayCorrect += correct;
+                        todayWrong += wrong;
+                        todayTotalPct += pct;
+                        todayCount++;
+                    } else if (qTimestamp >= startOfYesterday && qTimestamp < startOfToday) {
+                        // গতকালের হিসেব
+                        yesterCorrect += correct;
+                        yesterWrong += wrong;
+                        yesterTotalPct += pct;
+                        yesterCount++;
+                    } else {
+                        // তারও আগের বা সর্বমোট পূর্বের হিসেব
+                        historyCorrect += correct;
+                        historyWrong += wrong;
+                        historyTotalPct += pct;
+                        historyCount++;
+                    }
+                }
+
+                // ড্যাশবোর্ডের UI টেক্সট রিয়েল-টাইমে আপডেট করা
+                document.getElementById('today-correct').innerText = todayCorrect;
+                document.getElementById('today-wrong').innerText = todayWrong;
+                document.getElementById('today-avg').innerText = todayCount > 0 ? Math.round(todayTotalPct / todayCount) + "%" : "০%";
+
+                document.getElementById('yesterday-correct').innerText = yesterCorrect;
+                document.getElementById('yesterday-wrong').innerText = yesterWrong;
+                document.getElementById('yesterday-avg').innerText = yesterCount > 0 ? Math.round(yesterTotalPct / yesterCount) + "%" : "০%";
+
+                document.getElementById('history-correct').innerText = historyCorrect;
+                document.getElementById('history-wrong').innerText = historyWrong;
+                document.getElementById('history-avg').innerText = historyCount > 0 ? Math.round(historyTotalPct / historyCount) + "%" : "০%";
+            });
         }
     </script>
 </body>
